@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UnreadIQ – What Did I Miss?</title>
+<style>
+:root{--bg:#f5f6fb;--card:#fff;--tx:#1b1f3b;--mu:#5d6385;--ac:#4338ca;--ac2:#ede9fe;--bd:#e2e4f0;--hi:#b91c1c;--hib:#fee2e2;--me:#b45309;--meb:#fef3c7;--lo:#047857;--lob:#d1fae5;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1226;--card:#1a1e3a;--tx:#eceefc;--mu:#a3a9d4;--ac:#a5b4fc;--ac2:#2a2f5c;--bd:#2d3263;--hi:#fca5a5;--hib:#4a1d24;--me:#fcd34d;--meb:#473514;--lo:#6ee7b7;--lob:#0f3a2c}}
+:root[data-theme="dark"]{--bg:#0f1226;--card:#1a1e3a;--tx:#eceefc;--mu:#a3a9d4;--ac:#a5b4fc;--ac2:#2a2f5c;--bd:#2d3263;--hi:#fca5a5;--hib:#4a1d24;--me:#fcd34d;--meb:#473514;--lo:#6ee7b7;--lob:#0f3a2c}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--card);border-bottom:1px solid var(--bd)}
+h1{font-size:20px;margin:0;color:var(--ac)}h1 small{display:block;font-size:12px;color:var(--mu);font-weight:400}
+h2{margin:0 0 10px;font-size:18px}h3{margin:16px 0 8px;font-size:15px}
+nav{display:flex;gap:6px;overflow-x:auto;padding:10px 18px;background:var(--card);border-bottom:1px solid var(--bd)}
+nav button{white-space:nowrap;border:0;background:none;color:var(--mu);padding:8px 12px;border-radius:999px;cursor:pointer;font:inherit}
+nav button.on{background:var(--ac2);color:var(--ac);font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:16px 18px 60px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px}.stat b{font-size:28px;color:var(--ac);display:block}
+textarea,input,select{width:100%;font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:12px;padding:10px}
+textarea{min-height:280px;resize:vertical}
+.btn{border:0;background:var(--ac);color:#fff;padding:10px 16px;border-radius:12px;font:inherit;font-weight:600;cursor:pointer}
+:root:not([data-theme="light"]) .btn{color:#0f1226}
+.btn.s{background:var(--ac2);color:var(--ac)}.btn.d{background:var(--hib);color:var(--hi)}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}.row>*{flex:0 0 auto}.row input,.row select{width:auto;flex:1 1 160px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;margin-right:4px;background:var(--ac2);color:var(--ac)}
+.p-high{background:var(--hib);color:var(--hi)}.p-medium{background:var(--meb);color:var(--me)}.p-low{background:var(--lob);color:var(--lo)}
+.msg{border:1px solid var(--bd);border-left:5px solid var(--bd);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;background:var(--card)}
+.msg.high{border-left-color:var(--hi)}.msg.medium{border-left-color:var(--me)}.msg.low{border-left-color:var(--lo)}
+.msg.fin{opacity:.55}.msg.fin .t{text-decoration:line-through}
+.msg input{width:20px;height:20px;margin-top:3px;flex:0 0 auto}.msg .t{overflow-wrap:anywhere}
+mark{background:#fde047;color:#111;border-radius:4px;padding:0 3px}
+.mu{color:var(--mu);font-size:13px}.empty{color:var(--mu);font-style:italic}
+.err{background:var(--hib);color:var(--hi);padding:10px 14px;border-radius:12px;margin-top:10px}
+.note{background:var(--meb);color:var(--me);padding:10px 14px;border-radius:12px;margin-bottom:12px}
+.bar{height:12px;border-radius:99px;background:var(--bd);overflow:hidden;margin:8px 0}.bar i{display:block;height:100%;background:var(--ac)}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px;border-bottom:1px solid var(--bd);text-align:left}
+#busy{position:fixed;inset:0;background:rgba(15,18,38,.55);display:none;align-items:center;justify-content:center;color:#fff;font-weight:600;z-index:9}
+#busy.on{display:flex}#busy span{background:var(--card);color:var(--tx);padding:18px 26px;border-radius:16px}
+ul.s{padding-left:20px;margin:4px 0}.hide{display:none}
+.br{display:grid;grid-template-columns:130px 1fr 34px;gap:8px;align-items:center;font-size:14px}.br .bar{margin:4px 0}.br b{text-align:right}
+.hero{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;border-radius:20px;padding:22px;margin-bottom:12px}.hero h2{color:#fff;font-size:22px}.hero p{margin:4px 0 12px;opacity:.92}.hero .btn{background:#fff;color:#3730a3}.hero .btn.s{background:rgba(255,255,255,.2);color:#fff}
+.ring{width:96px;height:96px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#fde047 calc(var(--v)*1%),rgba(255,255,255,.25) 0);flex:0 0 auto}.ring b{width:74px;height:74px;border-radius:50%;background:#3b2fb8;display:grid;place-items:center;font-size:24px}
+#rs{position:fixed;inset:0;z-index:10;background:var(--bg);display:none;overflow:auto;padding:16px}#rs.on{display:block}.rsin{max-width:640px;margin:0 auto}
+.tm{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-weight:700}.tm .big{font-size:38px;color:var(--ac);font-variant-numeric:tabular-nums}
+.rc{border:2px solid var(--ac);border-radius:20px;padding:18px;background:var(--card);margin:12px 0;font-size:17px}.why{font-size:13px;color:var(--mu);margin-top:8px}
+kbd{border:1px solid var(--bd);border-radius:6px;padding:0 6px;font-size:12px;background:var(--bg)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+</style></head><body>
+<header><h1>UnreadIQ <small>“What Did I Miss?” — local-first unread chat summarizer</small></h1>
+<div><button class="btn" data-a="rescue">⚡ 60-Second Rescue</button> <span class="pill p-low" id="badge">🔒 Processing: on this device</span>
+<button class="btn d" data-a="clear">Clear All Data</button></div></header>
+<nav id="nav"></nav>
+<main><div id="tb" class="card hide"></div><div id="view"></div></main>
+<div id="rs"></div><div id="busy"><span>⏳ Analyzing conversation on your device…</span></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const rxe=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const MON='jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec',MN=MON.split('|');
+const TABS=[['home','Home'],['paste','Paste Conversation'],['sum','AI Summary'],['dec','Important Decisions'],['act','Action Items'],['inbox','Priority Inbox'],['miss','You May Have Missed'],['priv','Privacy Settings']];
+let S={tab:'home',raw:'',user:'',level:'medium',pf:'all',q:'',sort:'default',msgs:[],err:'',save:false,eng:'rule-based'};
+const RANK={high:0,medium:1,low:2};
+
+/* ---------- storage (opt-in only) ---------- */
+function persist(){try{if(S.save)localStorage.setItem('unreadiq',JSON.stringify({raw:S.raw,user:S.user,msgs:S.msgs,save:1}));else localStorage.removeItem('unreadiq')}catch(e){}}
+function restore(){try{const d=JSON.parse(localStorage.getItem('unreadiq')||'null');if(d){S.raw=d.raw;S.user=d.user;S.msgs=d.msgs||[];S.save=true}}catch(e){}}
+
+/* ---------- demo ---------- */
+function demo(){const d=n=>{const x=new Date();x.setDate(x.getDate()+n);return x.getDate()+' '+MN[x.getMonth()][0].toUpperCase()+MN[x.getMonth()].slice(1)};
+return `[09/10/26, 9:02 AM] Aman: Good morning team! Announcement: hackathon demo day is on ${d(5)} at 10:00 AM in Seminar Hall B.
+[09/10/26, 9:05 AM] Meera: lol did anyone watch the match last night
+[09/10/26, 9:06 AM] Karan: haha yes what a finish
+[09/10/26, 9:10 AM] Aman: @Riya please finish the UI mockups by ${d(2)}.
+[09/10/26, 9:14 AM] Dev: Should we use React or plain HTML for the prototype?
+[09/10/26, 9:15 AM] Meera: I think plain HTML is faster, maybe we could try it
+[09/10/26, 9:20 AM] Aman: Decided: we will go with plain HTML for the prototype. Final.
+[09/10/26, 9:22 AM] Karan: I'll prepare the demo script by tomorrow.
+[09/10/26, 9:30 AM] Prof. Rao: URGENT: the abstract must be submitted today before 5 PM. No extensions.
+[09/10/26, 9:34 AM] Dev: @Riya can you share the dataset link?
+[09/10/26, 9:40 AM] Meera: Riya, please send the budget sheet to Aman by ${d(-1)}.
+[09/10/26, 9:41 AM] Karan: anyone up for lunch?
+[09/10/26, 9:50 AM] Aman: Meeting tomorrow at 4 PM to review slides. Everyone please attend.
+[09/10/26, 9:55 AM] Dev: Maybe we should move the demo to a later date?
+[09/10/26, 9:56 AM] Meera: Thanks for the update!
+[09/10/26, 10:05 AM] Aman: Reminder: bring your college ID cards. Venue changed to Block C.
+[09/10/26, 10:12 AM] Prof. Rao: Riya, did you confirm your team's registration?`}
+
+/* ---------- parsing & analysis ---------- */
+const TS=/^\[?\s*(\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4},?\s*\d{1,2}:\d{2}(?::\d{2})?\s?(?:[ap]m)?)\s*\]?\s*-?\s*/i;
+function parse(raw){const out=[];for(let line of raw.split(/\r?\n/)){line=line.trim();if(!line)continue;let ts='';const t=line.match(TS);if(t){ts=t[1];line=line.slice(t[0].length)}
+ const m=line.match(/^(\p{L}[^:]{0,39}):\s+(.+)$/u);
+ if(m)out.push({sender:m[1].trim(),text:m[2].trim(),ts});else if(out.length&&!t)out[out.length-1].text+=' '+line}
+ return out}
+function findDl(t){const now=new Date(),t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());let parts=[],key=null,m;
+ const abs=(d,mo)=>{if(mo<0||mo>11||d<1||d>31)return null;const dt=new Date(now.getFullYear(),mo,d);if(dt-t0<-180*864e5)dt.setFullYear(dt.getFullYear()+1);return Math.round((dt-t0)/864e5)};
+ if(m=t.match(new RegExp('\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+('+MON+')[a-z]*','i'))){key=abs(+m[1],MN.indexOf(m[2].toLowerCase()));parts.push(m[0])}
+ else if(m=t.match(new RegExp('\\b('+MON+')[a-z]*\\s+(\\d{1,2})\\b','i'))){key=abs(+m[2],MN.indexOf(m[1].toLowerCase()));parts.push(m[0])}
+ else if((m=t.match(/\b(\d{1,2})[\/-](\d{1,2})\b/))&&/\b(by|before|due|until|till|deadline|on|submit)\b/i.test(t)){key=abs(+m[1],+m[2]-1);if(key!==null)parts.push(m[0])}
+ else if(m=t.match(/\b(today|tonight|tomorrow|end of day|eod|next week|(?:mon|tues|wednes|thurs|fri|satur|sun)day)\b/i)){const w=m[1].toLowerCase();
+  key=/today|tonight|eod|end of day/.test(w)?0:w==='tomorrow'?1:w==='next week'?7:((['sun','mon','tue','wed','thu','fri','sat'].indexOf(w.slice(0,3))-now.getDay()+7)%7)||7;parts.push(m[0])}
+ const tm=t.match(/\b\d{1,2}(?::\d{2})?\s?(?:am|pm)\b/i);if(tm)parts.push(tm[0]);
+ return parts.length?{label:parts.join(', '),key}:null}
+const R={urg:/\b(urgent|asap|immediately|critical|emergency|no extensions?|last date|final call)\b/i,
+ ann:/\b(announcement|announce|reminder|notice|please note|fyi|attention|meeting|exam|submission|deadline|holiday|cancell?ed|postponed|rescheduled|venue|scheduled?|changed|demo day|event)\b/i,
+ dec:/\b(decided|decision|final(ly)?|confirmed|agreed|approved|finali[sz]ed|settled|we will go with|going with|let'?s go with)\b/i,
+ sug:/\b(maybe|what if|how about|we could|we should|should we|i think|suggest|propose|why don'?t|can we)\b/i,
+ task:/\b(please|can you|could you|will you|need to|needs to|have to|must|assigned|responsible for|make sure)\b/i,
+ self:/\b(i'll|i will|i am going to|i'm going to)\b/i,triv:/^(thanks|thank you|ok|okay|lol|haha|👍|noted|sure)\b/i};
+function analyze(raw,user){const ms=parse(raw);const ur=user?new RegExp('(^|[^\\w])@?'+rxe(user)+'(?!\\w)','i'):null;
+ ms.forEach((m,i)=>{const t=m.text,f={};m.rev=false;m.done=false;
+  f.q=/\?/.test(t);f.urg=R.urg.test(t);f.mention=!!(ur&&m.sender.toLowerCase()!==user.toLowerCase()&&ur.test(t));
+  f.dec=R.dec.test(t)&&!f.q&&!/\b(maybe|should|might)\b/i.test(t);f.sug=!f.dec&&R.sug.test(t);
+  m.dl=findDl(t);f.ann=R.ann.test(t)&&!f.q;
+  const self=R.self.test(t),req=R.task.test(t)&&!f.q||self;let who='Not specified';
+  const at=t.match(/@(\w+)/),lead=t.match(/^(\w+)[,:]?\s+(please|can you|could you|will you|you need|you must)/i),will=t.match(/\b([A-Z][a-z]+) will \w+/);
+  if(at)who=at[1];else if(lead)who=lead[1];else if(self)who=m.sender;else if(will)who=will[1];else if(/\beveryone\b|\ball\b|\bteam\b/i.test(t))who='Everyone';
+  f.task=req&&(who!=='Not specified'||!!m.dl);m.who=who;f.mine=!!user&&who.toLowerCase()===user.toLowerCase();
+  if(f.q){let tg=at?at[1]:(lead&&/did|can|could|will/i.test(t)?lead[1]:null);if(!tg&&ur&&f.mention)tg=user;let rep=false;
+   for(let j=i+1;j<ms.length;j++){const o=ms[j];if(o.sender===m.sender)continue;if(tg){if(o.sender.toLowerCase()===tg.toLowerCase()){rep=true;break}}else if(j<=i+2&&!R.triv.test(o.text)){rep=true;break}}
+   f.aw=!rep;m.tg=tg}
+  m.f=f;const imp=f.urg||f.ann||f.dec||f.task||f.mention||f.aw||(m.dl&&m.dl.key!==null);
+  const k=m.dl?m.dl.key:null;
+  m.pri=f.urg||(f.task&&k!==null&&k<=1)||(f.ann&&k!==null&&k<=0)?'high':imp?'medium':'low';
+  m.i=i});return ms}
+const dlState=m=>!m.dl||m.dl.key===null?'':m.dl.key<0?'overdue':m.dl.key<=7?'upcoming':'later';
+
+/* ---------- selectors ---------- */
+const pass=m=>(S.pf==='all'||m.pri===S.pf)&&(!S.q||(m.sender+' '+m.text).toLowerCase().includes(S.q.toLowerCase()));
+const byP=(a,b)=>RANK[a.pri]-RANK[b.pri]||a.i-b.i;
+const byDl=(a,b)=>(a.dl&&a.dl.key!==null?a.dl.key:1e9)-(b.dl&&b.dl.key!==null?b.dl.key:1e9);
+const sel=(fn,sorter)=>S.msgs.filter(m=>fn(m)&&pass(m)).sort(sorter||byP);
+const all=fn=>S.msgs.filter(fn);
+function score(){const open=m=>!m.rev&&!m.done;const F=[
+ ['High-priority announcements',10,all(m=>m.pri==='high'&&(m.f.ann||m.f.urg)&&open(m)).length],
+ ['Direct mentions of you',8,all(m=>m.f.mention&&open(m)).length],
+ ['Uncompleted tasks',5,all(m=>m.f.task&&!m.done).length],
+ ['Approaching/overdue deadlines',6,all(m=>m.dl&&m.dl.key!==null&&m.dl.key<=2&&open(m)).length],
+ ['Questions awaiting reply',4,all(m=>m.f.aw&&!m.rev).length]];
+ const raw=F.reduce((a,f)=>a+f[1]*f[2],0);return{F,raw,v:Math.min(100,raw)}}
+
+/* ---------- rendering helpers ---------- */
+function hl(t){let h=esc(t);if(S.user)h=h.replace(new RegExp('(@?'+rxe(esc(S.user))+')(?![\\w])','gi'),'<mark>$1</mark>');return h}
+const pill=p=>`<span class="pill p-${p}">${p==='high'?'● High':p==='medium'?'◆ Medium':'▲ Low'}</span>`;
+function card(m,chk){const f=m.f,tags=[pill(m.pri)];
+ if(f.dec)tags.push('<span class="pill">✔ Confirmed decision</span>');else if(f.sug)tags.push('<span class="pill">💡 Suggestion – needs confirmation</span>');
+ if(f.aw)tags.push('<span class="pill">❓ Awaiting reply</span>');if(f.mention)tags.push('<span class="pill">@ Mentions you</span>');
+ if(f.task)tags.push(`<span class="pill">👤 ${esc(m.who)}</span>`);
+ if(m.dl){const s=dlState(m);tags.push(`<span class="pill ${s==='overdue'?'p-high':''}">⏰ ${esc(m.dl.label)}${s==='overdue'?' · overdue':m.dl.key===0?' · today':''}</span>`)}
+ else if(f.task)tags.push('<span class="pill">⏰ Deadline: Not specified</span>');
+ const on=chk?m[chk]:false;
+ return `<div class="msg ${m.pri} ${on?'fin':''}">${chk?`<input type="checkbox" data-a="chk" data-i="${m.i}" data-k="${chk}" ${on?'checked':''} aria-label="Mark ${chk==='done'?'completed':'reviewed'}">`:''}<div><div class="mu">${esc(m.sender)}${m.ts?' · '+esc(m.ts):''}</div><div class="t">${hl(m.text)}</div><div class="mu">Why flagged: ${esc(why(m))}</div><div>${tags.join('')}</div></div></div>`}
+const list=(a,chk)=>a.length?a.map(m=>card(m,chk)).join(''):'<p class="empty">Nothing found.</p>';
+const need=()=>S.msgs.length?'':'<div class="card"><p>No analysis yet. Paste a conversation (or load the demo) first.</p><button class="btn" data-a="tab" data-t="paste">Go to Paste Conversation</button></div>';
+
+/* ---------- summary ---------- */
+const STOP=new Set('this that with have from they will your about would there their what when which were been just than then them also more some very like please thanks good morning team everyone anyone should could maybe•'.split(' '));
+function topics(){const c={};S.msgs.forEach(m=>m.text.toLowerCase().replace(/[^a-z\s]/g,' ').split(/\s+/).forEach(w=>{if(w.length>3&&!STOP.has(w))c[w]=(c[w]||0)+1}));
+ return Object.entries(c).filter(e=>e[1]>=2).sort((a,b)=>b[1]-a[1]).slice(0,6).map(e=>`${e[0]} (${e[1]}×)`)}
+const cut=(t,n=150)=>t.length>n?t.slice(0,n)+'…':t;
+const line=m=>`[${m.pri.toUpperCase()}] ${m.sender}: ${cut(m.text)}${m.dl?` (When: ${m.dl.label})`:''}`;
+function summary(){const L=S.level,n=L==='short'?3:L==='medium'?6:99,ms=S.msgs;
+ const ann=all(m=>m.f.ann||m.f.urg).sort(byP),dec=all(m=>m.f.dec),tk=all(m=>m.f.task).sort(byDl),aw=all(m=>m.f.aw),sg=all(m=>m.f.sug&&!m.f.dec);
+ const people=new Set(ms.map(m=>m.sender)).size,sec=[];
+ sec.push({h:'Overview',i:[`${ms.length} messages from ${people} people. ${all(m=>m.pri!=='low').length} important, ${tk.length} task(s), ${dec.length} confirmed decision(s), ${aw.length} question(s) awaiting a reply.`]});
+ const tp=topics();if(L!=='short')sec.push({h:'Main topics',i:[tp.length?tp.join(', '):'Not enough repeated words to detect topics reliably.']});
+ sec.push({h:'Key updates & announcements',i:ann.slice(0,n).map(line)});
+ if(L!=='short'){sec.push({h:'Decisions (confirmed)',i:dec.slice(0,n).map(line)});sec.push({h:'Tasks',i:tk.slice(0,n).map(m=>`${cut(m.text,110)} — Owner: ${m.who} — Deadline: ${m.dl?m.dl.label:'Not specified'}`)})}
+ if(L==='detailed'){sec.push({h:'Suggestions (need confirmation)',i:sg.map(line)});sec.push({h:'Questions awaiting reply',i:aw.map(line)})}
+ return sec}
+const sumText=()=>'UnreadIQ Summary ('+S.level+')\n\n'+summary().map(s=>s.h.toUpperCase()+'\n'+(s.i.length?s.i.map(x=>'• '+x).join('\n'):'• None found')).join('\n\n');
+
+/* ---------- dashboard analysis ---------- */
+function ANA(){const ms=S.msgs,n=ms.length;if(!n)return'';
+ const bar=(l,v,mx,c)=>`<div class="br"><span>${l}</span><div class="bar"><i style="width:${mx?Math.round(v/mx*100):0}%${c?';background:'+c:''}"></i></div><b>${v}</b></div>`;
+ const pc={high:0,medium:0,low:0};ms.forEach(m=>pc[m.pri]++);
+ const types=[['Announcements',m=>m.f.ann],['Decisions',m=>m.f.dec],['Suggestions',m=>m.f.sug&&!m.f.dec],['Tasks',m=>m.f.task],['Questions',m=>m.f.q],['Awaiting reply',m=>m.f.aw],['Mentions of you',m=>m.f.mention]].map(t=>[t[0],ms.filter(t[1]).length]);
+ const ppl={};ms.forEach(m=>{const p=ppl[m.sender]||(ppl[m.sender]={t:0,i:0});p.t++;if(m.pri!=='low')p.i++});
+ const pr=Object.entries(ppl).sort((a,b)=>b[1].t-a[1].t).slice(0,6),mxP=pr[0][1].t;
+ const tk=ms.filter(m=>m.f.task),done=tk.filter(m=>m.done).length;
+ const ds={overdue:0,upcoming:0,later:0};ms.forEach(m=>{const s=dlState(m);if(s)ds[s]++});
+ const noOwner=tk.filter(m=>m.who==='Not specified').length,noDl=tk.filter(m=>!m.dl).length;
+ const lowPct=Math.round(pc.low/n*100),topI=Object.entries(ppl).sort((a,b)=>b[1].i-a[1].i)[0];
+ const ins=[`Most active: <b>${esc(pr[0][0])}</b> (${pr[0][1].t} of ${n} messages).`,
+  `${lowPct}% of messages were general chatter (low priority) — about ${100-lowPct}% needed attention.`];
+ if(topI&&topI[1].i)ins.push(`Most important messages came from <b>${esc(topI[0])}</b> (${topI[1].i}).`);
+ if(ds.overdue)ins.push(`⚠ ${ds.overdue} item(s) have dates earlier than today on this device.`);
+ if(tk.length)ins.push(`${tk.length-done} of ${tk.length} task(s) still open; ${noOwner} without a clear owner, ${noDl} without a stated deadline.`);
+ const aw=ms.filter(m=>m.f.aw).length;if(aw)ins.push(`${aw} question(s) appear unanswered and may need a reply.`);
+ return `<div class="card"><h2>📊 Conversation Analysis</h2><div class="two">
+ <div><h3>Priority distribution</h3>${bar('● High',pc.high,n,'var(--hi)')}${bar('◆ Medium',pc.medium,n,'var(--me)')}${bar('▲ Low',pc.low,n,'var(--lo)')}
+ <h3>Message types</h3>${types.map(t=>bar(t[0],t[1],n)).join('')}</div>
+ <div><h3>Top participants (messages)</h3>${pr.map(p=>bar(esc(p[0]),p[1].t,mxP)).join('')}
+ <h3>Task progress</h3>${bar('Completed',done,tk.length||1,'var(--lo)')}
+ <h3>Deadline status</h3>${bar('Overdue',ds.overdue,n,'var(--hi)')}${bar('Upcoming (≤7d)',ds.upcoming,n,'var(--me)')}${bar('Later',ds.later,n)}</div></div>
+ <h3>Key insights</h3><ul class="s">${ins.map(i=>`<li>${i}</li>`).join('')}</ul>
+ <p class="mu">Counts come from the rule-based analyzer and update as you tick items off.</p></div>`}
+
+/* ---------- views ---------- */
+const V={
+home(){const s=score(),imp=all(m=>m.pri!=='low').length,tk=all(m=>m.f.task).length,me=all(m=>m.f.mention).length,dl=all(m=>m.dl).length;
+ const lab=s.v>=60?'High':s.v>=25?'Moderate':'Low';
+ return `<div class="hero">${S.msgs.length?`<div class="ring" style="--v:${s.v}" aria-label="Missed Information Score ${s.v}"><b>${s.v}</b></div>`:''}<div><h2>${S.msgs.length?'Your unread chat, triaged':'Missed 200 messages? Rescue them in 60 seconds.'}</h2><p>Decisions, tasks, deadlines and anything aimed at you — analyzed on your device, nothing uploaded.</p><button class="btn" data-a="rescue">⚡ Start 60-Second Rescue</button> <button class="btn s" data-a="tab" data-t="paste">Paste a conversation</button> <button class="btn s" data-a="demo">Load Demo</button></div></div>`+
+ (S.msgs.length?`<div class="grid"><div class="stat"><b>${imp}</b>Important messages</div><div class="stat"><b>${tk}</b>Tasks</div><div class="stat"><b>${S.user?me:'–'}</b>Mentions${S.user?'':' (no username)'}</div><div class="stat"><b>${dl}</b>Dates / deadlines</div></div>
+ <div class="card"><h2>Missed Information Score: ${s.v}/100 (${lab})</h2><div class="bar"><i style="width:${s.v}%"></i></div>
+ <table><tr><th>Factor</th><th>Count</th><th>Weight</th><th>Points</th></tr>${s.F.map(f=>`<tr><td>${f[0]}</td><td>${f[2]}</td><td>×${f[1]}</td><td>${f[1]*f[2]}</td></tr>`).join('')}<tr><td colspan="3"><b>Total (capped at 100)</b></td><td><b>${s.v}</b></td></tr></table>
+ <p class="mu">A simple, transparent heuristic — not a scientifically validated measure. One message can count under several factors. Marking items reviewed/completed lowers the score.</p></div>`+ANA():'<p class="empty">Load the demo or paste a conversation to see your dashboard.</p>')},
+paste(){return `<div class="card"><h2>Paste Conversation</h2><p class="mu">WhatsApp, Telegram, Discord, Slack or any “Name: message” text. Timestamps are optional.</p>
+ <textarea id="raw" placeholder="[09/10/26, 9:02 AM] Aman: Meeting tomorrow at 4 PM…">${esc(S.raw)}</textarea>
+ <div class="row"><input id="user" placeholder="Your username (to detect mentions)" value="${esc(S.user)}"><select id="lvl"><option value="short">Short summary</option><option value="medium">Medium summary</option><option value="detailed">Detailed summary</option></select></div>
+ <div class="row"><button class="btn" data-a="go">Analyze Conversation</button><label class="btn s" style="cursor:pointer">📂 Open .txt export<input id="fl" type="file" accept=".txt,text/plain" hidden></label><button class="btn s" data-a="demo">Load Demo Conversation</button></div>
+ ${S.err?`<div class="err" role="alert">${esc(S.err)}</div>`:''}</div>`},
+sum(){if(!S.msgs.length)return need();return `<div class="card"><h2>AI Summary <span class="pill">${S.eng} engine · local</span></h2>
+ <div class="row"><select id="lvl2" data-a="lvl"><option value="short">Short</option><option value="medium">Medium</option><option value="detailed">Detailed</option></select><button class="btn s" data-a="copy">Copy summary</button><button class="btn s" data-a="dl">Download .txt</button></div>
+ ${summary().map(s=>`<h3>${s.h}</h3>${s.i.length?'<ul class="s">'+s.i.map(x=>`<li>${hl(x)}</li>`).join('')+'</ul>':'<p class="empty">None found.</p>'}`).join('')}
+ <details><summary class="mu">Plain-text version (copy manually if buttons are blocked)</summary><textarea readonly style="min-height:160px">${esc(sumText())}</textarea></details><p class="mu" id="cmsg"></p></div>`},
+dec(){if(!S.msgs.length)return need();return `<div class="card"><h2>Important Decisions</h2><h3>✔ Confirmed decisions</h3>${list(sel(m=>m.f.dec))}<h3>💡 Suggestions — Needs confirmation</h3>${list(sel(m=>m.f.sug&&!m.f.dec))}<h3>❓ Unanswered questions</h3>${list(sel(m=>m.f.aw),'rev')}</div>`},
+act(){if(!S.msgs.length)return need();const a=sel(m=>m.f.task,S.sort==='deadline'?byDl:byP),d=a.filter(m=>m.done).length;
+ return `<div class="card"><h2>Action Items <span class="pill">${d}/${a.length} done</span></h2>${list(a,'done')}</div>`},
+inbox(){if(!S.msgs.length)return need();return ['high','medium','low'].map(p=>{const a=sel(m=>m.pri===p);return a.length||S.pf==='all'?`<div class="card"><h2>${pill(p)} ${p[0].toUpperCase()+p.slice(1)} priority (${a.length})</h2>${list(a,'rev')}</div>`:''}).join('')||'<p class="empty">No matches.</p>'},
+miss(){if(!S.msgs.length)return need();const nu=S.user?'':'<p class="empty">Personal mentions can’t be determined reliably — enter your username on the Paste tab.</p>';const s=score();
+ const sec=(t,body)=>`<div class="card"><h2>${t}</h2>${body}</div>`;
+ return `<div class="card"><h2>You May Have Missed — score ${s.v}/100</h2><div class="bar"><i style="width:${s.v}%"></i></div><p class="mu">Tick items as reviewed/completed; the score updates.</p></div>`+
+ sec('1. Messages mentioning you',S.user?list(sel(m=>m.f.mention),'rev'):nu)+
+ sec('2. Tasks assigned to you',S.user?list(sel(m=>m.f.mine&&m.f.task),'done'):nu)+
+ sec('3. Important announcements',list(sel(m=>m.f.ann&&m.pri!=='low'),'rev'))+
+ sec('4a. Overdue (based on this device’s date)',list(sel(m=>dlState(m)==='overdue',byDl),'rev'))+
+ sec('4b. Upcoming deadlines & events',list(sel(m=>['upcoming','later'].includes(dlState(m)),byDl),'rev'))+
+ sec('5. Questions awaiting a reply',list(sel(m=>m.f.aw),'rev'))},
+priv(){return `<div class="card"><h2>Privacy Settings</h2><table>
+ <tr><td>Processing location</td><td>On this device (in your browser)</td></tr>
+ <tr><td>Engine</td><td>Rule-based analyzer (regex/keyword heuristics). No AI model is loaded in this build.</td></tr>
+ <tr><td>Network</td><td>This app’s code makes no requests with your text; it uses no external fonts, APIs or keys. (The page itself was downloaded from its host.)</td></tr>
+ <tr><td>Remote AI fallback</td><td>Not implemented — so nothing can be sent anywhere, and no consent prompt is needed.</td></tr>
+ <tr><td>Storage</td><td>Nothing saved unless you tick the box below.</td></tr></table>
+ <p><label><input type="checkbox" id="sv" style="width:auto" ${S.save?'checked':''}> Save results on this device (browser local storage)</label></p>
+ <button class="btn d" data-a="clear">Clear All Data</button> <p class="mu">Limitations: rules can miss sarcasm, slang or non-English text. Review important items yourself.</p></div>`}};
+
+function render(){$('#nav').innerHTML=TABS.map(t=>`<button class="${S.tab===t[0]?'on':''}" data-a="tab" data-t="${t[0]}">${t[1]}</button>`).join('');
+ const tb=$('#tb'),show=['sum','dec','act','inbox','miss'].includes(S.tab)&&S.msgs.length;tb.classList.toggle('hide',!show);
+ if(show&&!tb.dataset.on){tb.dataset.on=1;tb.innerHTML=`<div class="row"><select id="pf"><option value="all">All priorities</option><option value="high">High only</option><option value="medium">Medium only</option><option value="low">Low only</option></select><input id="q" type="search" placeholder="Search messages or people…"><select id="so"><option value="default">Sort by priority</option><option value="deadline">Sort tasks by deadline</option></select></div>`}
+ if(show){$('#pf').value=S.pf;$('#so').value=S.sort}
+ $('#view').innerHTML=V[S.tab]();const l=$('#lvl')||$('#lvl2');if(l)l.value=S.level;
+ const b=$('#badge');b.textContent='🔒 Processing: on this device (rule-based)'}
+const q=$('#q');
+
+/* ---------- actions ---------- */
+async function go(){S.raw=($('#raw')||{value:S.raw}).value;S.user=($('#user')||{value:S.user}).value.trim().replace(/^@/,'');S.level=$('#lvl')?$('#lvl').value:S.level;S.err='';
+ if(!S.raw.trim()){S.err='Please paste a conversation first, or load the demo.';return render()}
+ $('#busy').classList.add('on');await new Promise(r=>setTimeout(r,60));
+ try{const raw=S.raw.length>2e6?S.raw.slice(-2e6):S.raw;S.msgs=analyze(raw,S.user);
+  if(S.msgs.length<2){S.msgs=[];S.err='Could not detect messages. Use lines like “Name: message” (WhatsApp/Telegram/Slack exports work).';}else{S.tab='home';if(S.raw.length>2e6)S.err=''}}
+ catch(e){S.err='Analysis failed: '+e.message}
+ $('#busy').classList.remove('on');persist();render()}
+function clearAll(){if(!confirm('Remove the pasted conversation and all results from this device?'))return;S={...S,raw:'',user:'',msgs:[],err:'',save:false,tab:'home',pf:'all',q:'',sort:'default'};try{localStorage.removeItem('unreadiq')}catch(e){}$('#tb').dataset.on='';render()}
+async function copy(){const t=sumText();let ok=false;try{await navigator.clipboard.writeText(t);ok=true}catch(e){}$('#cmsg').textContent=ok?'Copied to clipboard.':'Clipboard blocked — use the plain-text box above.'}
+function dl(){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([sumText()],{type:'text/plain'}));a.download='unreadiq-summary.txt';document.body.appendChild(a);a.click();a.remove();$('#cmsg').textContent='Download requested. If your browser or embedded preview blocks downloads, copy from the plain-text box above.'}catch(e){$('#cmsg').textContent='Download blocked — copy from the plain-text box.'}}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-a]');if(!el)return;const a=el.dataset.a;
+ if(a==='tab'){S.tab=el.dataset.t;render()}
+ else if(a==='demo'){S.raw=demo();if(!S.user)S.user='Riya';S.err='';go()}
+ else if(a==='rescue'||a.startsWith('rs-'))rsAct(a);else if(a==='go')go();else if(a==='clear')clearAll();else if(a==='copy')copy();else if(a==='dl')dl();
+ else if(a==='chk'){S.msgs[+el.dataset.i][el.dataset.k]=el.checked;persist();render()}});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.id==='pf'||t.id==='so'){S.pf=$('#pf').value;S.sort=$('#so').value;render()}
+ else if(t.id==='lvl2'){S.level=t.value;render()}
+ else if(t.id==='sv'){S.save=t.checked;persist()}
+ else if(t.id==='fl'&&t.files[0]){S.user=($('#user')||{value:S.user}).value;const r=new FileReader();r.onload=()=>{S.raw=String(r.result);S.err='';render()};r.readAsText(t.files[0])}});
+document.addEventListener('input',e=>{if(e.target.id==='q'){S.q=e.target.value;$('#view').innerHTML=V[S.tab]()}
+ else if(e.target.id==='raw')S.raw=e.target.value});
+/* ---------- Explainability ---------- */
+function why(m){const f=m.f,w=[],u=m.text.match(R.urg);if(u)w.push('urgency word “'+u[0]+'”');if(f.mention)w.push('mentions you');if(f.task)w.push('task for '+m.who);
+ if(m.dl)w.push('date/time “'+m.dl.label+'”');if(f.aw)w.push('question with no reply found');if(f.dec)w.push('decision wording');else if(f.sug)w.push('suggestion wording (unconfirmed)');
+ if(f.ann&&!u)w.push('announcement keywords');return w.length?w.join(' · '):'general conversation'}
+
+/* ---------- 60-Second Inbox Rescue ---------- */
+let RS=null,RT=null;
+function rank(m){const f=m.f,k=m.dl?m.dl.key:null;let s=0;if(f.urg)s+=50;if(k!==null&&k<0&&(f.task||f.ann))s+=40;if(f.mine&&f.task)s+=35;if(f.mention)s+=30;
+ if(f.aw)s+=(m.tg&&S.user&&m.tg.toLowerCase()===S.user.toLowerCase())?30:15;if(k!==null&&k>=0&&k<=1)s+=25;if(f.ann&&m.pri==='high')s+=20;if(f.dec)s+=10;if(f.task&&!f.mine)s+=8;return s}
+const rsQueue=()=>S.msgs.filter(m=>!m.rev&&!m.done).map(m=>[m,rank(m)]).filter(x=>x[1]>=15).sort((a,b)=>b[1]-a[1]||a[0].i-b[0].i).slice(0,8).map(x=>x[0]);
+function rsAct(a){
+ if(a==='rescue'){if(!S.msgs.length){S.raw=demo();S.user=S.user||'Riya';S.msgs=analyze(S.raw,S.user);persist()}
+  RS={q:rsQueue(),i:0,el:0,last:Date.now(),ok:0,sk:0,before:RS&&RS.before!==undefined&&!RS.fresh?RS.before:score().v,pause:false,done:false};clearInterval(RT);RT=setInterval(rsTick,200);return rsDraw()}
+ if(!RS)return;const m=RS.q[RS.i];
+ if(a==='rs-ok'&&m&&!RS.done){m.rev=true;if(m.f.task)m.done=true;RS.ok++;RS.i++}
+ else if(a==='rs-skip'&&m&&!RS.done){RS.sk++;RS.i++}
+ else if(a==='rs-pause'&&!RS.done){RS.pause=!RS.pause;RS.last=Date.now()}
+ else if(a==='rs-end')RS.done=true;
+ else if(a==='rs-copy'){const t=$('#rr');if(t){t.select();try{navigator.clipboard.writeText(t.value)}catch(e){}}return}
+ else if(a==='rs-close'||a==='rs-miss'){clearInterval(RT);RT=null;$('#rs').classList.remove('on');RS=null;persist();if(a==='rs-miss')S.tab='miss';render();return}
+ if(RS.i>=RS.q.length)RS.done=true;rsDraw()}
+function rsTick(){if(!RS||RS.done)return;const n=Date.now();if(!RS.pause)RS.el+=(n-RS.last)/1000;RS.last=n;
+ if(RS.el>=60){RS.done=true;return rsDraw()}const t=$('#rt'),b=$('#rb');if(t){t.textContent=Math.max(0,Math.ceil(60-RS.el))+'s';b.style.width=(100-RS.el/60*100)+'%'}}
+function rsDraw(){const o=$('#rs'),r=RS,q=r.q;o.classList.add('on');let h='';
+ if(!r.done&&!q[r.i])r.done=true;
+ if(!r.done){const m=q[r.i];
+  h=`<div class="tm"><span>⚡ Inbox Rescue</span><span class="big" id="rt">${Math.ceil(60-r.el)}s</span><span><button class="btn s" data-a="rs-pause">${r.pause?'▶ Resume':'⏸ Pause'}</button> <button class="btn s" data-a="rs-end">End</button></span></div>
+  <div class="bar"><i id="rb" style="width:${100-r.el/60*100}%"></i></div>
+  <p class="mu">Item ${r.i+1} of ${q.length} · most critical first${r.pause?' · PAUSED':''}</p>
+  <div class="rc"><div class="mu">${esc(m.sender)} · ${pill(m.pri)}${m.dl?' · ⏰ '+esc(m.dl.label):''}</div><div>${hl(m.text)}</div><div class="why">Why this matters: ${esc(why(m))}</div>
+  ${m.f.aw?`<p class="mu">Quick reply (edit before sending):</p><div class="row"><input id="rr" value="${esc('Hi '+m.sender+', saw this — I’ll get back to you shortly.')}"><button class="btn s" data-a="rs-copy">Copy</button></div>`:''}</div>
+  <div class="row"><button class="btn" data-a="rs-ok">${m.f.task?'✔ Mark done':'✔ Got it'}</button><button class="btn s" data-a="rs-skip">Skip</button></div>
+  <p class="mu"><kbd>Enter</kbd> got it · <kbd>S</kbd> skip · <kbd>P</kbd> pause · <kbd>Esc</kbd> end</p>`}
+ else{clearInterval(RT);RT=null;const words=S.msgs.reduce((a,m)=>a+m.text.split(/\s+/).length,0),rd=Math.max(1,Math.round(words/230*60)),sp=Math.round(Math.min(60,r.el)),rem=q.filter(m=>!m.rev&&!m.done);
+  h=`<h2>🎉 Rescue complete</h2><div class="grid"><div class="stat"><b>${r.before}→${score().v}</b>Missed Info Score</div><div class="stat"><b>${r.ok}</b>Handled</div><div class="stat"><b>${rem.length}</b>Still open</div><div class="stat"><b>${sp}s</b>vs ~${Math.floor(rd/60)}m ${rd%60}s to read all ${S.msgs.length} messages</div></div>
+  <p class="mu">Reading time is an estimate at 230 words/minute. The score is a heuristic, not a validated measure.</p>
+  ${rem.length?'<h3>Still open</h3>'+rem.map(m=>card(m)).join(''):'<p>✅ Every critical item is handled.</p>'}
+  <div class="row"><button class="btn" data-a="rescue">⚡ Run again</button><button class="btn s" data-a="rs-miss">Open “You May Have Missed”</button><button class="btn s" data-a="rs-close">Close</button></div>`}
+ o.innerHTML='<div class="rsin" role="dialog" aria-label="60-second inbox rescue">'+h+'</div>'}
+document.addEventListener('keydown',e=>{if(!RS||(e.target.tagName||'')==='INPUT')return;const k=e.key.toLowerCase();
+ if(k==='escape')return rsAct(RS.done?'rs-close':'rs-end');if(RS.done)return;
+ if(k==='enter'||k==='arrowright'){e.preventDefault();rsAct('rs-ok')}else if(k==='s')rsAct('rs-skip');else if(k==='p')rsAct('rs-pause')});
+restore();render();
+</script></body></html>
